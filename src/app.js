@@ -5,6 +5,8 @@ var bodyParser = require('koa-bodyparser');
 
 const users = require("./routes/api/user");
 
+console.log(process.env.MONGODBUSER);
+
 // 实例化koa
 const app = new Koa();
 
@@ -12,9 +14,9 @@ app.use(bodyParser());
 
 const router = new Router();
 
-const userName = "geminglu";
-const password = "m2E4QKqHuKFNuNtH";
-const mongodbUrl = "cluster0.xspgx.mongodb.net/test";
+const userName = process.env.MONGODBUSER;
+const password = process.env.MONGODBPASSWORD;
+const mongodbUrl = process.env.MONGODBURI;
 
 
 mongoose
@@ -60,5 +62,5 @@ app.use(router.routes()).use(router.allowedMethods());
 const port = process.env.PORT || 5000;
 
 app.listen(port, () => {
-  console.log(`server starten on ${port}`);
+  console.log(`server starten on http://locahost:${port}`);
 });

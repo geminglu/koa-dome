@@ -4,7 +4,8 @@
   "description": "koa的练习项目",
   "main": "app.js",
   "scripts": {
-    "start": "nodemon ./src/app.js"
+    "start": "dotenv nodemon ./src/app.js",
+    "start:uat": "dotenv -e .env.uat nodemon ./src/app.js"
   },
   "author": "",
   "license": "ISC",
@@ -18,7 +19,7 @@
     "mongoose": "^6.3.0"
   },
   "devDependencies": {
-    "@dotenv/cli": "^2.2.2",
+    "dotenv-cli": "^5.1.0",
     "nodemon": "^2.0.15"
   }
 }
