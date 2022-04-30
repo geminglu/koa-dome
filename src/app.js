@@ -3,6 +3,8 @@ const Router = require("koa-router");
 const mongoose = require("mongoose");
 var bodyParser = require('koa-bodyparser');
 
+const users = require("./routes/api/user");
+
 // 实例化koa
 const app = new Koa();
 
@@ -14,7 +16,6 @@ const userName = "geminglu";
 const password = "m2E4QKqHuKFNuNtH";
 const mongodbUrl = "cluster0.xspgx.mongodb.net/test";
 
-const users = require("./routes/api/user");
 
 mongoose
   .connect(`mongodb+srv://${userName}:${password}@${mongodbUrl}`, {
