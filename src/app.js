@@ -1,23 +1,16 @@
 const Koa = require("koa");
-const Router = require("koa-router");
 const mongoose = require("mongoose");
-var bodyParser = require('koa-bodyparser');
-
-const users = require("./routes/api/user");
-
-console.log(process.env.MONGODBUSER);
+const bodyParser = require("koa-bodyparser");
+const router = require("./routes/index");
 
 // 实例化koa
 const app = new Koa();
 
 app.use(bodyParser());
 
-const router = new Router();
-
 const userName = process.env.MONGODBUSER;
 const password = process.env.MONGODBPASSWORD;
 const mongodbUrl = process.env.MONGODBURI;
-
 
 mongoose
   .connect(`mongodb+srv://${userName}:${password}@${mongodbUrl}`, {
@@ -50,12 +43,6 @@ mongoose.connection.on("disconnected", function () {
   console.log("连接断开");
 });
 
-// 路由
-router.get("/", async (ctx) => {
-  ctx.body = { msg: "Hello Koa" };
-});
-
-router.use("/api/user", users);
 // 配置路由
 app.use(router.routes()).use(router.allowedMethods());
 

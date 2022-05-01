@@ -1,5 +1,4 @@
 const Router = require("koa-router");
-const router = new Router();
 const User = require("../../models/user");
 const gravatar = require("gravatar");
 const jwt = require("jsonwebtoken");
@@ -7,6 +6,8 @@ const bcrypt = require("bcryptjs");
 
 const { SECRET } = require("../../config/keys");
 const { USERNAME } = require("../../utils/regexp");
+
+const router = new Router();
 
 /**
  * @router POST api/user/
