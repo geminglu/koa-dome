@@ -1,12 +1,16 @@
 const Koa = require("koa");
 const mongoose = require("mongoose");
-const bodyParser = require("koa-bodyparser");
+const koaBody = require("koa-body");
 const router = require("./routes/index");
 
 // 实例化koa
 const app = new Koa();
 
-app.use(bodyParser());
+app.use(
+  koaBody({
+    multipart: true, // 支持文件上传
+  })
+);
 
 const userName = process.env.MONGODBUSER;
 const password = process.env.MONGODBPASSWORD;
