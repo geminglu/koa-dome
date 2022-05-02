@@ -1,6 +1,7 @@
 const Koa = require("koa");
 const mongoose = require("mongoose");
 const koaBody = require("koa-body");
+
 const router = require("./routes/index");
 
 // 实例化koa
@@ -12,9 +13,9 @@ app.use(
   })
 );
 
-const userName = process.env.MONGODBUSER;
-const password = process.env.MONGODBPASSWORD;
-const mongodbUrl = process.env.MONGODBURI;
+const userName = process.env.MONGODB_USER;
+const password = process.env.MONGODB_PWD;
+const mongodbUrl = process.env.MONGODB_URI;
 
 mongoose
   .connect(`mongodb+srv://${userName}:${password}@${mongodbUrl}`, {
@@ -30,21 +31,21 @@ mongoose
  * 连接成功
  */
 mongoose.connection.on("connected", function () {
-  console.log("连接成功");
+  console.log("mongo连接成功");
 });
 
 /**
  * 连接异常
  */
 mongoose.connection.on("error", function (err) {
-  console.log("连接异常");
+  console.log("mongo连接异常");
 });
 
 /**
  * 连接断开
  */
 mongoose.connection.on("disconnected", function () {
-  console.log("连接断开");
+  console.log("mongo连接断开");
 });
 
 // 配置路由

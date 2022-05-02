@@ -36,3 +36,11 @@ app.use(
   })
 );
 ```
+
+## 数据库的操作
+
+## 安装
+
+```bash
+yarn add  mysql2 sequelize
+```

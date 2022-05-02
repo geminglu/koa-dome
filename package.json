@@ -5,7 +5,8 @@
   "main": "app.js",
   "scripts": {
     "start": "dotenv nodemon ./src/app.js",
-    "start:uat": "dotenv -e .env.uat nodemon ./src/app.js"
+    "start:uat": "dotenv -e .env.uat nodemon ./src/app.js",
+    "sequelize-auto": "dotenv node ./src/config/sequelize-auto.js"
   },
   "author": "",
   "license": "ISC",
@@ -16,10 +17,14 @@
     "koa": "^2.13.4",
     "koa-body": "^5.0.0",
     "koa-router": "^10.1.1",
-    "mongoose": "^6.3.0"
+    "mongoose": "^6.3.0",
+    "mysql2": "^2.3.3",
+    "sequelize": "^6.19.0"
   },
   "devDependencies": {
     "dotenv-cli": "^5.1.0",
-    "nodemon": "^2.0.15"
+    "mysql": "^2.18.1",
+    "nodemon": "^2.0.15",
+    "sequelize-auto": "^0.8.8"
   }
 }
