@@ -1,7 +1,5 @@
 const Router = require("koa-router");
-
-// const users = require("./api/user");
-const users = require("./user");
+const fs = require("fs");
 
 const router = new Router();
 
@@ -10,6 +8,12 @@ router.get("/", async (ctx) => {
   ctx.body = { msg: "Hello Koa" };
 });
 
-router.use("/api", users);
+const files = fs.readdirSync(__dirname).filter((f) => {
+  return f.endsWith(".js") && f !== "index.js";
+});
+
+files.forEach((f) => {
+  router.use(require("./" + f).routes());
+});
 
 module.exports = router;
