@@ -1,6 +1,8 @@
-const { createUser, getName, getEmail } = require("../service/user");
+const jwt = require("jsonwebtoken");
+const { createUser, getUserInfo, getEmail } = require("../service/user");
 const gravatar = require("gravatar");
 const { USERNAME } = require("../utils/regexp");
+const { userLoginError } = require("../constant/errType");
 
 class userContriller {
   /**
@@ -27,7 +29,7 @@ class userContriller {
     const avatar = gravatar.url(email, { s: "200", r: "pg", d: "mm" });
     try {
       const [isName, isEmail] = await Promise.all([
-        getName(name),
+        getUserInfo({ name }),
         getEmail(email),
       ]);
       if (isName) {
@@ -48,10 +50,52 @@ class userContriller {
       ctx.status = 500;
       ctx.body = { success: false, message: error };
     }
+
+    await next();
   }
 
-  async login(ctx) {}
-  async profile() {}
+  async login(ctx, next) {
+    const { name: n } = ctx.request.body;
+    const { JWT_SECRET } = process.env;
+    try {
+      const { id, name, email } = await getUserInfo({ name: n });
+      const token = jwt.sign({ id, name, email }, JWT_SECRET, {
+        expiresIn: 3600,
+      });
+      ctx.status = 200;
+      ctx.body = {
+        success: true,
+        data: {
+          token,
+        },
+      };
+      ctx.cookies.set("token", token, {
+        path: "/",
+        expires: new Date(Date.now() + 2592000000), // 有效期
+        httpOnly: true, // document.cookie不可读
+      });
+    } catch (error) {
+      console.log(error);
+      return ctx.app.emit("error", userLoginError, ctx);
+    }
+    await next();
+  }
+  async profile(ctx, next) {
+    const { id } = ctx.state.user;
+    console.log({ id });
+    const { id: _id, name, email, avatar } = await getUserInfo({ id });
+    console.log(_id, name, email, avatar);
+    ctx.status = 200;
+    ctx.body = {
+      success: true,
+      data: {
+        id: _id,
+        name,
+        email,
+        avatar,
+      },
+    };
+  }
 }
 
 module.exports = new userContriller();

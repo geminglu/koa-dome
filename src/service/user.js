@@ -1,6 +1,4 @@
 const { user } = require("../db");
-const bcrypt = require("bcryptjs");
-
 
 class UserService {
   /**
@@ -13,7 +11,7 @@ class UserService {
     return await user.create({
       name,
       email,
-      password: bcrypt.hashSync(password, 10),  // 对传递过来的密码进行加密，需要安装一个bcrypt包
+      password,
       avatar,
     });
   }
@@ -23,8 +21,9 @@ class UserService {
    * @param {name:string} name
    * @returns
    */
-  async getName(name) {
-    return await user.findOne({ where: { name } });
+  async getUserInfo(name) {
+    console.log("name", name);
+    return await user.findOne({ where: { ...name } });
   }
 
   /**
@@ -32,7 +31,7 @@ class UserService {
    * @param {email:string} email
    * @returns
    */
-   async getEmail(email) {
+  async getEmail(email) {
     return await user.findOne({ where: { email } });
   }
 }

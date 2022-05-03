@@ -10,6 +10,6 @@ router.get("/", async (ctx) => {
   ctx.body = { msg: "Hello Koa" };
 });
 
-router.use("/api/user", users);
+router.use("/api", users);
 
 module.exports = router;
