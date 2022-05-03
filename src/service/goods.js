@@ -17,6 +17,10 @@ class GoodsService {
   async getGoodsInfo(parma) {
     return await goods.findOne({ where: parma });
   }
+
+  async updataGoods(id, body) {
+    return await goods.update(body, { where: { id } });
+  }
 }
 
 module.exports = new GoodsService();

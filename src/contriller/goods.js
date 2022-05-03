@@ -1,5 +1,5 @@
 const path = require("path");
-const { createGoods, getGoodsInfo } = require("../service/goods");
+const { createGoods, getGoodsInfo, updataGoods } = require("../service/goods");
 
 class Goods {
   /**
@@ -45,6 +45,33 @@ class Goods {
       console.log(error);
       ctx.status = 500;
       ctx.body = { message: "商品添加失败" };
+      return;
+    }
+    await next();
+  }
+
+  /**
+   * 修改商品
+   * @param {*} ctx
+   * @param {*} next
+   */
+  async updataGoods(ctx, next) {
+    const { id } = ctx.params;
+    try {
+      // 在创建之前先查询一下商品名称是否已经存在了
+      if (!(await getGoodsInfo({ id }))) {
+        ctx.status = 409;
+        ctx.body = { message: `商品不存在` };
+        return;
+      }
+      const res = await updataGoods(id, ctx.request.body);
+      const result = await getGoodsInfo({ id })
+      ctx.status = 200;
+      ctx.body = { message: "修改成功", data: result };
+    } catch (error) {
+      console.log(error);
+      ctx.status = 500;
+      ctx.body = { message: "商品修改失败" };
       return;
     }
     await next();
