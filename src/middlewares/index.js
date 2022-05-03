@@ -1,6 +1,6 @@
 const bcrypt = require("bcryptjs");
 const { getUserInfo } = require("../service/user");
-const { userDoesNotExist, userLoginError } = require("../constant/errType");
+const { USERNAME } = require("../utils/regexp");
 
 class middlewares {
   /**
@@ -10,18 +10,16 @@ class middlewares {
    */
   async crpyPassword(ctx, next) {
     const { password } = ctx.request.body;
-
     // 对传递过来的密码进行加密，需要安装一个bcrypt包
     const salt = bcrypt.genSaltSync(10);
     const hash = bcrypt.hashSync(password, salt);
 
     ctx.request.body.password = hash;
-
     await next();
   }
 
   /**
-   * 验证用户
+   * 登录验证用户
    * @param {*} ctx
    * @param {*} next
    */
@@ -31,19 +29,46 @@ class middlewares {
     const { name, password } = ctx.request.body;
 
     if (!(name || password)) {
-      return ctx.app.emit("error", userFormateError, ctx);
+      ctx.status = 409;
+      ctx.body = { message: "用户名和密码不能为空" };
+      return;
     }
     try {
       const result = await getUserInfo({ name });
       if (!result) {
-        return ctx.app.emit("error", userDoesNotExist, ctx);
+        ctx.status = 409;
+        ctx.body = { message: "用户不存在" };
+        return;
       }
       if (!bcrypt.compareSync(password, result.password)) {
-        return ctx.app.emit("error", invalidPassword, ctx);
+        ctx.status = 409;
+        ctx.body = { message: "密码错误" };
+        return;
       }
     } catch (error) {
-      console.log(error);
-      return ctx.app.emit("error", userLoginError, ctx);
+      ctx.status = 409;
+      ctx.body = { message: "登录失败" };
+      return;
+    }
+    await next();
+  }
+
+  /**
+   * 验证邮箱用户名密码是否为空
+   * @param {*} ctx
+   * @param {*} next
+   */
+  async validRequired(ctx, next) {
+    const { password, email, name } = ctx.request.body;
+    if (!(email && name && password)) {
+      ctx.status = 409;
+      ctx.body = { message: "必填参数不能为空" };
+      return;
+    }
+    if (!USERNAME.test(name)) {
+      ctx.status = 409;
+      ctx.body = { message: "用户名不符合规范" };
+      return;
     }
     await next();
   }

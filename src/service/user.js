@@ -22,7 +22,6 @@ class UserService {
    * @returns
    */
   async getUserInfo(name) {
-    console.log("name", name);
     return await user.findOne({ where: { ...name } });
   }
 

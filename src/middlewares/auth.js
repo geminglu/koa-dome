@@ -4,6 +4,8 @@ class Auth {
     const { JWT_SECRET } = process.env;
     const { authorization } = ctx.request.header;
     if (!authorization) {
+      ctx.status = 401;
+      ctx.body = { message: "token无效" };
       return;
     }
     try {
@@ -13,7 +15,8 @@ class Auth {
       );
       ctx.state.user = token;
     } catch (error) {
-      console.log(error);
+      ctx.status = 401;
+      ctx.body = { message: error.message };
       return;
     }
     await next();
