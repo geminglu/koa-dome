@@ -54,6 +54,26 @@ class GoodsService {
   async restoreGoods(id) {
     return await goods.restore({ where: { id } });
   }
+
+  /**
+   * 查询商品
+   * @param {*} pageNum
+   * @param {*} pageSize
+   */
+  async queryGoods(pageNum, pageSize) {
+    const offset = (pageNum - 1) * pageSize;
+    const { count, rows } = await goods.findAndCountAll({
+      attributes: { exclude: ["deletedAt"]},
+      offset,
+      limit: Number(pageSize),
+    });
+    return {
+      pageNum,
+      pageSize,
+      total: count,
+      list: rows,
+    };
+  }
 }
 
 module.exports = new GoodsService();

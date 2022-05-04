@@ -6,7 +6,8 @@ const {
   updataGoods,
   remove,
   hardDeleteGoods,
-  restore
+  restore,
+  queryGoods
 } = require("../contriller/goods");
 const { auth, hadAdmin } = require("../middlewares/auth");
 
@@ -27,5 +28,9 @@ router.post("/:id/off", auth, hadAdmin, remove);
 
 // 上架商品
 router.post("/:id/on", auth, hadAdmin, restore);
+
+
+// 查询商品
+router.get("/", queryGoods);
 
 module.exports = router;

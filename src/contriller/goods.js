@@ -6,6 +6,7 @@ const {
   removeMandatoryGoods,
   removeGoods,
   restoreGoods,
+  queryGoods,
 } = require("../service/goods");
 
 class Goods {
@@ -155,6 +156,25 @@ class Goods {
       console.log("error", error);
       ctx.status = 500;
       ctx.body = { message: "上架失败" };
+      return;
+    }
+    await next();
+  }
+
+  /**
+   * 查询商品
+   * @param {*} ctx
+   * @param {*} next
+   */
+  async queryGoods(ctx, next) {
+    const { pageNum = 1, pageSize = 10 } = ctx.request.query;
+    try {
+      const res = await queryGoods(pageNum, pageSize);
+      ctx.status = 200;
+      ctx.body = { data: res };
+    } catch (error) {
+      ctx.status = 500;
+      ctx.body = { message: "查询失败" };
       return;
     }
     await next();
