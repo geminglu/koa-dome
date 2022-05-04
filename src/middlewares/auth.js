@@ -30,6 +30,12 @@ class Auth {
     await next();
   }
 
+  /**
+   * 验证是否为管理员
+   * @param {*} ctx 
+   * @param {*} next 
+   * @returns 
+   */
   async hadAdmin(ctx, next) {
     const { id } = ctx.state.user;
     try {

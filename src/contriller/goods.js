@@ -1,5 +1,5 @@
 const path = require("path");
-const { createGoods, getGoodsInfo, updataGoods } = require("../service/goods");
+const { createGoods, getGoodsInfo, updataGoods, removeMandatoryGoods } = require("../service/goods");
 
 class Goods {
   /**
@@ -65,13 +65,39 @@ class Goods {
         return;
       }
       const res = await updataGoods(id, ctx.request.body);
-      const result = await getGoodsInfo({ id })
+      const result = await getGoodsInfo({ id });
       ctx.status = 200;
       ctx.body = { message: "修改成功", data: result };
     } catch (error) {
       console.log(error);
       ctx.status = 500;
       ctx.body = { message: "商品修改失败" };
+      return;
+    }
+    await next();
+  }
+
+  /**
+   * 删除商品(硬删除)
+   * @param {*} ctx
+   * @param {*} next
+   */
+  async removeGoods(ctx, next) {
+    const { id } = ctx.params;
+    try {
+      // 在创建之前先查询一下商品名称是否已经存在了
+      if (!(await getGoodsInfo({ id }))) {
+        ctx.status = 409;
+        ctx.body = { message: `商品不存在` };
+        return;
+      }
+      await removeMandatoryGoods(id);
+      ctx.status = 200;
+      ctx.body = { message: "删除成功" };
+    } catch (error) {
+      console.log(error);
+      ctx.status = 500;
+      ctx.body = { message: "商品删除失败" };
       return;
     }
     await next();
