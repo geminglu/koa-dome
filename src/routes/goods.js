@@ -4,7 +4,9 @@ const {
   upload,
   addGoods,
   updataGoods,
-  removeGoods,
+  remove,
+  hardDeleteGoods,
+  restore
 } = require("../contriller/goods");
 const { auth, hadAdmin } = require("../middlewares/auth");
 
@@ -18,6 +20,12 @@ router.post("/", auth, addGoods);
 router.put("/:id", auth, updataGoods);
 
 // 删除商品
-router.delete("/:id", auth, hadAdmin, removeGoods);
+router.delete("/:id", auth, hadAdmin, hardDeleteGoods);
+
+// 下架商品
+router.post("/:id/off", auth, hadAdmin, remove);
+
+// 上架商品
+router.post("/:id/on", auth, hadAdmin, restore);
 
 module.exports = router;

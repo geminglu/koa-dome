@@ -1,5 +1,12 @@
 const path = require("path");
-const { createGoods, getGoodsInfo, updataGoods, removeMandatoryGoods } = require("../service/goods");
+const {
+  createGoods,
+  getGoodsInfo,
+  updataGoods,
+  removeMandatoryGoods,
+  removeGoods,
+  restoreGoods,
+} = require("../service/goods");
 
 class Goods {
   /**
@@ -82,22 +89,72 @@ class Goods {
    * @param {*} ctx
    * @param {*} next
    */
-  async removeGoods(ctx, next) {
+  async hardDeleteGoods(ctx, next) {
     const { id } = ctx.params;
     try {
-      // 在创建之前先查询一下商品名称是否已经存在了
-      if (!(await getGoodsInfo({ id }))) {
-        ctx.status = 409;
-        ctx.body = { message: `商品不存在` };
+      const res = await removeMandatoryGoods(id);
+      if (res) {
+        ctx.status = 200;
+        ctx.body = { message: "删除成功" };
         return;
+      } else {
+        ctx.status = 408;
+        ctx.body = { message: "删除失败" };
       }
-      await removeMandatoryGoods(id);
-      ctx.status = 200;
-      ctx.body = { message: "删除成功" };
     } catch (error) {
       console.log(error);
       ctx.status = 500;
       ctx.body = { message: "商品删除失败" };
+      return;
+    }
+    await next();
+  }
+
+  /**
+   * 下架商品
+   * @param {*} ctx
+   * @param {*} next
+   */
+  async remove(ctx, next) {
+    try {
+      const res = await removeGoods(ctx.params.id);
+      if (res) {
+        ctx.status = 200;
+        ctx.body = { message: "下架成功" };
+        return;
+      } else {
+        ctx.status = 408;
+        ctx.body = { message: "下架失败" };
+      }
+    } catch (error) {
+      console.log("error", error);
+      ctx.status = 500;
+      ctx.body = { message: "下架失败" };
+      return;
+    }
+    await next();
+  }
+
+  /**
+   * 上架架商品
+   * @param {*} ctx
+   * @param {*} next
+   */
+  async restore(ctx, next) {
+    try {
+      const res = await restoreGoods(ctx.params.id);
+      if (res) {
+        ctx.status = 200;
+        ctx.body = { message: "上架成功" };
+      } else {
+        ctx.status = 408;
+        ctx.body = { message: "上架失败" };
+        return;
+      }
+    } catch (error) {
+      console.log("error", error);
+      ctx.status = 500;
+      ctx.body = { message: "上架失败" };
       return;
     }
     await next();

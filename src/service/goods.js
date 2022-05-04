@@ -30,11 +30,29 @@ class GoodsService {
 
   /**
    * 强制删除商品
-   * @param {*} id 
-   * @returns 
+   * @param {*} id
+   * @returns
    */
   async removeMandatoryGoods(id) {
+    return await goods.destroy({ where: { id }, force: true });
+  }
+
+  /**
+   * 下架商品
+   * @param {*} id
+   * @returns
+   */
+  async removeGoods(id) {
     return await goods.destroy({ where: { id } });
+  }
+
+  /**
+   * 上架架商品
+   * @param {*} id
+   * @returns
+   */
+  async restoreGoods(id) {
+    return await goods.restore({ where: { id } });
   }
 }
 

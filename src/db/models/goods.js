@@ -27,6 +27,7 @@ module.exports = function (sequelize) {
     },
     {
       tableName: "goods",
+      paranoid: true,
     }
   );
 };
