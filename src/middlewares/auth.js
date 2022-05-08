@@ -21,7 +21,9 @@ class Auth {
         authorization.replace("Bearer ", ""),
         JWT_SECRET
       );
-      ctx.state.user = token;
+      const { id } = token;
+      const res = await getUserInfo({ id });
+      ctx.state.user = res;
     } catch (error) {
       ctx.status = 401;
       ctx.body = { message: error.message };
@@ -32,9 +34,9 @@ class Auth {
 
   /**
    * 验证是否为管理员
-   * @param {*} ctx 
-   * @param {*} next 
-   * @returns 
+   * @param {*} ctx
+   * @param {*} next
+   * @returns
    */
   async hadAdmin(ctx, next) {
     const { id } = ctx.state.user;
