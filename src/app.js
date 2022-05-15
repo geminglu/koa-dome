@@ -15,6 +15,7 @@ app.use(
       uploadDir: path.join(__dirname, "../static/img"), // 文件存放路径
       keepExtensions: true, // 是否保留文件的扩展名
     },
+    parsedMethods: ["POST", "PUT", "PATCH", "DELETE"],
   })
 );
 app.use(KoaStatic(path.join(__dirname, "../static/img")));

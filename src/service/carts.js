@@ -92,6 +92,13 @@ class CartsService {
     return result;
   }
 
+  /**
+   * 更新购物车
+   * @param {*} carts_id 购物车id
+   * @param {*} selected 选中状态
+   * @param {*} number 数量
+   * @returns
+   */
   async upDataCarts(carts_id, selected, number) {
     const result = await carts.findByPk(carts_id, {
       attributes: ["id", "number", "selected"],
@@ -110,6 +117,21 @@ class CartsService {
     if (selected !== undefined) result.selected = selected;
     if (number !== undefined) result.number = number;
     return result.save();
+  }
+
+  /**
+   * 批量删除购物车
+   * @param {array} ids 购物车id
+   * @returns
+   */
+  async deleteCarts(ids) {
+    return await carts.destroy({
+      where: {
+        id: {
+          [Op.in]: ids,
+        },
+      },
+    });
   }
 }
 
