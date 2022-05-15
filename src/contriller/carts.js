@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-const { addCartsService } = require("../service/carts");
+const { addCartsService, queryCarts } = require("../service/carts");
 
 class CartsContriller {
   /**
@@ -21,6 +21,24 @@ class CartsContriller {
         message: "操作失败",
       };
     }
+    await next();
+  }
+
+  /**
+   * 查询购物车列表
+   * @param {*} ctx 
+   * @param {*} next 
+   */
+  async getCarts(ctx, next) {
+    const { id } = ctx.state.user;
+    const { pageSize = 10, pageNum = 1 } = ctx.request.query;
+    try {
+      const res = await queryCarts(id, pageSize, pageNum);
+      ctx.status = 200;
+      ctx.body = {
+        data: res,
+      };
+    } catch (error) {}
     await next();
   }
 }
