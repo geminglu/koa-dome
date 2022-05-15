@@ -30,6 +30,13 @@ class CartsService {
     return await carts.create({ goods_id, user_id });
   }
 
+  /**
+   * 查询当前用户下的购物车列表
+   * @param {*} id
+   * @param {*} pageSize
+   * @param {*} pageNum
+   * @returns
+   */
   async queryCarts(id, pageSize, pageNum) {
     const offset = (pageNum - 1) * pageSize;
     const { count, rows } = await carts.findAndCountAll({
@@ -57,6 +64,52 @@ class CartsService {
       total: count,
       list: rows,
     };
+  }
+
+  /**
+   * 查询购物车指定商品明细
+   * @param {string} user_id 用户id
+   * @param {string} carts_id 购物车id
+   */
+  async getCarts(user_id, carts_id) {
+    const result = await carts.findOne({
+      where: {
+        [Op.and]: [{ id: carts_id }, { user_id }],
+      },
+      attributes: ["id", "number", "selected"],
+      include: {
+        model: goods,
+        as: "goods_info",
+        attributes: [
+          "id",
+          "goods_name",
+          "goods_price",
+          "goods_num",
+          "goods_img",
+        ],
+      },
+    });
+    return result;
+  }
+
+  async upDataCarts(carts_id, selected, number) {
+    const result = await carts.findByPk(carts_id, {
+      attributes: ["id", "number", "selected"],
+      include: {
+        model: goods,
+        as: "goods_info",
+        attributes: [
+          "id",
+          "goods_name",
+          "goods_price",
+          "goods_num",
+          "goods_img",
+        ],
+      },
+    });
+    if (selected !== undefined) result.selected = selected;
+    if (number !== undefined) result.number = number;
+    return result.save();
   }
 }
 

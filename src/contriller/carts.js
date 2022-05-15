@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-const { addCartsService, queryCarts } = require("../service/carts");
+const { addCartsService, queryCarts, getCarts, upDataCarts } = require("../service/carts");
 
 class CartsContriller {
   /**
@@ -26,8 +26,8 @@ class CartsContriller {
 
   /**
    * 查询购物车列表
-   * @param {*} ctx 
-   * @param {*} next 
+   * @param {*} ctx
+   * @param {*} next
    */
   async getCarts(ctx, next) {
     const { id } = ctx.state.user;
@@ -39,6 +39,27 @@ class CartsContriller {
         data: res,
       };
     } catch (error) {}
+    await next();
+  }
+
+  async upCarts(ctx, next) {
+    // 每个用户只能更新自己的购物车列表，需要先查询一下当前用户的购物车是否有这个商品
+    const { id: user_id } = ctx.state.user;
+    const { id: carts_id } = ctx.request.params;
+    const { selected, number } = ctx.request.body;
+    try {
+      const cartsGoodsInfo = await getCarts(user_id, carts_id);
+      if (!cartsGoodsInfo) {
+        ctx.status = 400;
+        ctx.body = { message: "商品信息不存在" };
+        return;
+      }
+      const res = await upDataCarts(carts_id, selected, number);
+      ctx.status = 200;
+      ctx.body = { data: res };
+    } catch (error) {
+      console.log("err", error);
+    }
     await next();
   }
 }
