@@ -4,6 +4,7 @@ const {
   queryAddrDetails,
   upDateAddr,
   removeAddr,
+  defaultAddr,
 } = require("../service/addr");
 
 class AddrContriller {
@@ -35,7 +36,9 @@ class AddrContriller {
           data: res,
         };
       }
-    } catch (error) {}
+    } catch (error) {
+      console.log(error);
+    }
     await next();
   }
 
@@ -92,10 +95,17 @@ class AddrContriller {
         address,
         is_default,
       });
-      ctx.status = 200;
-      ctx.body = {
-        data: res,
-      };
+      if (res) {
+        ctx.status = 200;
+        ctx.body = {
+          message: "更新成功",
+        };
+      } else {
+        ctx.status = 400;
+        ctx.body = {
+          message: "地址不存在",
+        };
+      }
     } catch (error) {
       console.log(error);
     }
@@ -126,6 +136,26 @@ class AddrContriller {
     } catch (error) {
       console.log(error);
     }
+    await next();
+  }
+
+  async setDefaultAddr(ctx, next) {
+    const { id: user_id } = ctx.state.user;
+    const { id } = ctx.request.params;
+    try {
+      const res = await defaultAddr(user_id, id);
+      if (res) {
+        ctx.status = 200;
+        ctx.body = {
+          message: "设置成功",
+        };
+      } else {
+        ctx.status = 400;
+        ctx.body = {
+          message: "地址不存在",
+        };
+      }
+    } catch (error) {}
     await next();
   }
 }
