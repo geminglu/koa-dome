@@ -18,13 +18,20 @@ class AddrService {
   async queryAddr(id) {
     return await addr.findAll({
       where: { user_id: id },
-      attributes: [
-        "id",
-        "consignee",
-        "phone",
-        "address",
-        "is_default",
-      ],
+      attributes: ["id", "consignee", "phone", "address", "is_default"],
+    });
+  }
+
+  /**
+   * 获取收件地址详情
+   * @param {string} user_id 用户id
+   * @param {string} id 收件地址id
+   * @returns
+   */
+  async queryAddrDetails(user_id, id) {
+    return await addr.findOne({
+      where: { user_id, id },
+      attributes: ["id", "consignee", "phone", "address", "is_default"],
     });
   }
 }
