@@ -1,4 +1,10 @@
-const { createAddr, queryAddr, queryAddrDetails, upDateAddr } = require("../service/addr");
+const {
+  createAddr,
+  queryAddr,
+  queryAddrDetails,
+  upDateAddr,
+  removeAddr,
+} = require("../service/addr");
 
 class AddrContriller {
   /**
@@ -90,6 +96,33 @@ class AddrContriller {
       ctx.body = {
         data: res,
       };
+    } catch (error) {
+      console.log(error);
+    }
+    await next();
+  }
+
+  /**
+   * 删除收件地址
+   * @param {*} ctx
+   * @param {*} next
+   */
+  async deleteAddr(ctx, next) {
+    const { id: user_id } = ctx.state.user;
+    const { id } = ctx.request.params;
+    try {
+      const res = await removeAddr(user_id, id);
+      if (res) {
+        ctx.status = 200;
+        ctx.body = {
+          message: "删除成功",
+        };
+      } else {
+        ctx.status = 400;
+        ctx.body = {
+          message: "地址不存在",
+        };
+      }
     } catch (error) {
       console.log(error);
     }
