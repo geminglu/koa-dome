@@ -1,7 +1,7 @@
 const Router = require("koa-router");
 const router = new Router({ prefix: "/api/address" });
 const { auth } = require("../middlewares/auth");
-const { addAddr, getAddr, getAddrDetails } = require("../contriller/addr.js");
+const { addAddr, getAddr, getAddrDetails, upDateAddrDetails } = require("../contriller/addr.js");
 
 // 添加收件地址
 router.post("/", auth, addAddr);
@@ -11,5 +11,8 @@ router.get("/", auth, getAddr);
 
 // 获取收件地址详情
 router.get("/:id", auth, getAddrDetails);
+
+// 更新收件地址详情
+router.put("/:id", auth, upDateAddrDetails);
 
 module.exports = router;

@@ -1,4 +1,4 @@
-const { createAddr, queryAddr, queryAddrDetails } = require("../service/addr");
+const { createAddr, queryAddr, queryAddrDetails, upDateAddr } = require("../service/addr");
 
 class AddrContriller {
   /**
@@ -60,6 +60,32 @@ class AddrContriller {
     const { id } = ctx.request.params;
     try {
       const res = await queryAddrDetails(user_id, id);
+      ctx.status = 200;
+      ctx.body = {
+        data: res,
+      };
+    } catch (error) {
+      console.log(error);
+    }
+    await next();
+  }
+
+  /**
+   * 更新收件地址详情
+   * @param {*} ctx
+   * @param {*} next
+   */
+  async upDateAddrDetails(ctx, next) {
+    const { id: user_id } = ctx.state.user;
+    const { id } = ctx.request.params;
+    const { consignee, phone, address, is_default } = ctx.request.body;
+    try {
+      const res = await upDateAddr(user_id, id, {
+        consignee,
+        phone,
+        address,
+        is_default,
+      });
       ctx.status = 200;
       ctx.body = {
         data: res,

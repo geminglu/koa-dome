@@ -34,6 +34,18 @@ class AddrService {
       attributes: ["id", "consignee", "phone", "address", "is_default"],
     });
   }
+
+  /**
+   * 更新收件地址详情
+   * @param {string} user_id
+   * @param {string} id
+   * @param {{ consignee:string, phone:string, address:string, is_default:boolean }} data
+   * @returns
+   */
+  async upDateAddr(user_id, id, body) {
+    return await addr.update(body, { where: {user_id, id}});
+  }
+
 }
 
 module.exports = new AddrService();
